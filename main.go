@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"io"
+	"log"
 	"net/http"
-	"strings"
+	"regexp"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/gin-gonic/gin"
 )
 
 type UserData struct {
@@ -16,46 +16,84 @@ type UserData struct {
 }
 
 func main() {
-	router := gin.Default()
+	var urls = []string{"https://www.dakshk.xyz/"}
 
-	router.GET("/getpage", func(c *gin.Context) {
-		client := &http.Client{}
+	linkCH := make(chan string)
 
-		req, err := http.NewRequest("GET", "https://news.ycombinator.com/", nil)
+	for _, url := range urls {
+		go func(url string) {
+			linkCH <- url
+		}(url)
+	}
+
+	go func() {
+		for link := range linkCH {
+			FetchLink(link)
+		}
+	}()
+
+	time.Sleep(6 * time.Second)
+}
+
+func FetchLink(link string) {
+	//fmt.Println("hello from lame")
+	url := link
+	fmt.Println("print channel data", url)
+
+	var urlArr []string
+
+	go func(url string) {
+
+		resp, err := http.Get(url)
 		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
+			fmt.Println("Failed to fetch url: ", url, err)
 			return
 		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
-			return
-		}
-
 		defer resp.Body.Close()
 
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
-			return
+		if resp.StatusCode != http.StatusOK {
+			log.Fatalf("Failed to fetch %s: %d %s", url, resp.StatusCode, resp.Status)
 		}
 
-		doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
-			return
+			fmt.Println("failed while reading the body in goquery: ", err)
 		}
 
-		doc.Find("span.titleline").Each(func(i int, elem *goquery.Selection) {
+		doc.Find("a").Each(func(i int, elem *goquery.Selection) {
 
-			text := elem.Text()
-			fmt.Println("Found ", text)
+			//atag := elem.Find("a").First()
+			link, ok := elem.Attr("href")
+			if ok {
+				urlArr = append(urlArr, link)
+			}
+
 		})
 
-		c.Header("Content-Type", "application/json")
-		c.String(resp.StatusCode, string(body))
-	})
+		fmt.Println("received link is ", url)
 
-	router.Run(":8080")
+		for i, url := range urlArr {
+			fmt.Printf("URL %d is %s\n", i, url)
+		}
+		fmt.Printf("\nURL BREAK\n")
+	}(url)
+
+	//time.Sleep(4 * time.Second)
+
+	//UrlValidator(urlArr)
+}
+
+func UrlValidator(urlArr []string) {
+	var urlRegexp = regexp.MustCompile(`^(http|https)://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/[a-zA-Z0-9-._~:?#@!$&'()*+,;=]*)*$`)
+	// urlRegexp.MatchString(url)
+	count := 0
+	for i, url := range urlArr {
+		res := urlRegexp.MatchString(url)
+
+		if res {
+			fmt.Printf("URL %d us %s\n", i, url)
+			count++
+		}
+	}
+	fmt.Printf("Total valid URL count is %d\n", count)
 }
