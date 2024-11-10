@@ -10,13 +10,8 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type UserData struct {
-	Id       string `json:"id"`
-	Username string `json:"username"`
-}
-
 func main() {
-	var urls = []string{"https://www.dakshk.xyz/"}
+	var urls = []string{"https://aniketprajapati.me/"}
 
 	linkCH := make(chan string)
 
@@ -32,13 +27,14 @@ func main() {
 		}
 	}()
 
-	time.Sleep(6 * time.Second)
+	defer close(linkCH)
+
+	time.Sleep(2 * time.Second)
 }
 
 func FetchLink(link string) {
-	//fmt.Println("hello from lame")
+
 	url := link
-	fmt.Println("print channel data", url)
 
 	var urlArr []string
 
@@ -71,16 +67,15 @@ func FetchLink(link string) {
 		})
 
 		fmt.Println("received link is ", url)
-
+		fmt.Println()
+		UrlValidator(urlArr)
 		for i, url := range urlArr {
 			fmt.Printf("URL %d is %s\n", i, url)
 		}
 		fmt.Printf("\nURL BREAK\n")
+		fmt.Println("")
 	}(url)
 
-	//time.Sleep(4 * time.Second)
-
-	//UrlValidator(urlArr)
 }
 
 func UrlValidator(urlArr []string) {
