@@ -11,20 +11,25 @@ import (
 )
 
 func main() {
-	var urls = []string{"https://aniketprajapati.me/"}
+
+	var urls = []string{"https://news.ycombinator.com/"}
 
 	linkCH := make(chan string)
 
 	for _, url := range urls {
+
 		go func(url string) {
+
 			linkCH <- url
 		}(url)
 	}
 
 	go func() {
+
 		for link := range linkCH {
 			FetchLink(link)
 		}
+
 	}()
 
 	defer close(linkCH)
@@ -53,7 +58,7 @@ func FetchLink(link string) {
 
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
-			fmt.Println("failed while reading the body in goquery: ", err)
+			fmt.Println("failed while reading the body in goquery: ", err.Error())
 		}
 
 		doc.Find("a").Each(func(i int, elem *goquery.Selection) {
@@ -69,11 +74,11 @@ func FetchLink(link string) {
 		fmt.Println("received link is ", url)
 		fmt.Println()
 		UrlValidator(urlArr)
-		for i, url := range urlArr {
+		/* for i, url := range urlArr {
 			fmt.Printf("URL %d is %s\n", i, url)
-		}
+		} */
 		fmt.Printf("\nURL BREAK\n")
-		fmt.Println("")
+		fmt.Println()
 	}(url)
 
 }
@@ -90,5 +95,5 @@ func UrlValidator(urlArr []string) {
 			count++
 		}
 	}
-	fmt.Printf("Total valid URL count is %d\n", count)
+	fmt.Printf("\nTotal valid URL count is %d\n", count)
 }
