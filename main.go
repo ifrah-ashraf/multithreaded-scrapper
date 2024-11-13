@@ -102,15 +102,3 @@ func UrlValidator(urlArr []string) {
 	}
 	fmt.Printf("\nTotal valid URL count is %d\n", count)
 }
-
-/* go func() {
-
-	for link := range linkCH {
-		FetchLink(link)
-	}
-
-}() */
-
-/* for i, url := range urlArr {
-	fmt.Printf("URL %d is %s\n", i, url)
-} */
