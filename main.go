@@ -14,7 +14,7 @@ import (
 func main() {
 	t1 := time.Now()
 
-	var urls = []string{"https://news.ycombinator.com/", "https://monkeytype.com/", "https://www.amazon.in/"}
+	var urls = []string{"https://news.ycombinator.com/", "https://monkeytype.com/", "https://www.amazon.in/", "https://devfolio.co/hackathons", "https://www.goal.com/en-in", "http://fmovies.to/"}
 	var wgSend sync.WaitGroup
 	var wgRec sync.WaitGroup
 	linkCH := make(chan string)
