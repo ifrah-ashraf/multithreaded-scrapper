@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"regexp"
 	"sync"
@@ -13,8 +12,8 @@ import (
 
 func main() {
 	t1 := time.Now()
-
 	var urls = []string{"https://news.ycombinator.com/", "https://monkeytype.com/", "https://www.amazon.in/", "https://devfolio.co/hackathons", "https://www.goal.com/en-in", "http://fmovies.to/"}
+
 	var wgSend sync.WaitGroup
 	var wgRec sync.WaitGroup
 	linkCH := make(chan string)
@@ -61,7 +60,7 @@ func FetchLink(link string) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Failed to fetch %s: %d %s", url, resp.StatusCode, resp.Status)
+		fmt.Printf("Failed to fetch %s: %d %s", url, resp.StatusCode, resp.Status)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
