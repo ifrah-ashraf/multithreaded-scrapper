@@ -1,6 +1,8 @@
-# Multithreaded Scraper in Go
+# Multithreaded ~~Scraper~~ Crawler in Go
 
-This project is a **multithreaded web scraper** built with Go, designed to scrape all links present on a main website (e.g., `wikipedia.org`). It leverages **goroutines** and **channels** for concurrent processing, along with proper synchronization mechanisms.
+> **Note:** Despite the name, this project is technically a **web crawler**, not a scraper (ironic, right?). It doesn’t extract structured data like product info or text content — it simply discovers and collects **all the hyperlinks** found on a given website.
+
+This project is a **multithreaded web crawler** built with Go, designed to traverse and collect all links present on a main website (e.g., `wikipedia.org`). It leverages **goroutines** and **channels** for concurrent processing, ensuring efficient and fast link discovery across multiple pages.
 
 ## Features
 
