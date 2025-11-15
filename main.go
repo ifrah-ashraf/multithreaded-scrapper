@@ -12,7 +12,7 @@ import (
 
 func main() {
 	t1 := time.Now()
-	var urls = []string{"https://news.ycombinator.com/", "https://monkeytype.com/", "https://www.amazon.in/", "https://devfolio.co/hackathons", "https://www.goal.com/en-in", "http://fmovies.to/"}
+	var urls = []string{"https://apify.com/", "https://monkeytype.com/", "https://www.amazon.in/", "https://devfolio.co/hackathons", "https://www.goal.com/en-in", "http://fmovies.to/"}
 
 	var wgSend sync.WaitGroup
 	var wgRec sync.WaitGroup
@@ -95,7 +95,7 @@ func UrlValidator(urlArr []string) {
 		res := urlRegexp.MatchString(url)
 
 		if res {
-			fmt.Printf("URL %d us %s\n", i, url)
+			fmt.Printf("URL %d is %s\n", i, url)
 			count++
 		}
 	}
